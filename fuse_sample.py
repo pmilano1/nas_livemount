@@ -88,6 +88,8 @@ if __name__ == '__main__':
 #    fuse = FUSE(
 #        RubrikFS(), args.mount, foreground=True, ro=True, allow_other=True)
     rubrik = Rubrik(rubrikHost, rubrikKey)
-    out = rubrik.browse_path(rubrikSnapshot)
-    print(out['data'])
 
+    objs = ['.', '..']
+    for obj in rubrik.browse_path(rubrikSnapshot)['data']:
+        objs += obj['filename']
+    print(objs)
