@@ -2,7 +2,7 @@
 from __future__ import print_function, absolute_import, division
 
 import requests
-import fuse
+from fuse import Fuse
 
 from sys import argv, exit
 
