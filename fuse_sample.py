@@ -19,7 +19,7 @@ class RubrikFS(LoggingMixIn, Operations):
         return ['.', '..', 'uid', 'gid', 'pid']
 
 
-class Rubrik(rubrikHost, rubrikKey):
+class Rubrik(str(rubrikHost), str(rubrikKey)):
     class RubrikException(Exception):
         def __init__(self, msg):
             self.msg = msg
