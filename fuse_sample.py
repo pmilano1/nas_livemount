@@ -76,6 +76,8 @@ if __name__ == '__main__':
     parser.add_argument('mount')
     args = parser.parse_args()
 
+    print(args)
+
     logging.basicConfig(level=logging.DEBUG)
     fuse = FUSE(
         RubrikFS(), args.mount, foreground=True, ro=True, allow_other=True)
