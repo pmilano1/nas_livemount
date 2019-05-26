@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 from __future__ import print_function, absolute_import, division
-
+import logging
+from errno import ENOENT
+from stat import S_IFDIR, S_IFREG
+from time import time
+from fuse import FUSE, FuseOSError, Operations, LoggingMixIn, fuse_get_context
 import requests
-from fuse import Fuse
 
-from sys import argv, exit
 
 rubrikHost = "shrd1-rbk01.rubrikdemo.com"
 rubrikKey = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyOWNiNzFhMS0yZGIwLTRlZGQtYjA1Mi1kNmQ1NWRlMjBiOTRfMmY2MzFmYjItNzUyMi00ZTcwLWFjNzgtMzk1Y2EzNTIwMmRjIiwiaXNzIjoiMjljYjcxYTEtMmRiMC00ZWRkLWIwNTItZDZkNTVkZTIwYjk0IiwianRpIjoiYjNjYzUzYTUtNDIwMi00ZDc5LWE4ZDctMmFjNGI3ODk3YmU3In0.CyijHNB9H1-VTPD0MHcnvegHI0e0ZoA80y8n_W0yliI"
@@ -26,10 +28,9 @@ class rubrikStat(fuse.Stat):
 
 
 # Simple dump of a directory
-class RubrikFS(Fuse):
+class RubrikFS(LoggingMixIn, Operations):
     def readdir(self, path, offset):
-        for r in '.', '..', hello_path[1:]:
-            yield fuse.Direntry(r)
+        return ['.', '..', 'uid', 'gid', 'pid']
 
 
 class Rubrik(rubrikHost,rubrikKey):
@@ -83,17 +84,12 @@ class Rubrik(rubrikHost,rubrikKey):
         sys.exit(1)
 
 
-def main():
-    usage="""
-Userspace Rubrik
-""" + Fuse.fusage
-    server = RubrikFS(version="%prog " + fuse.__version__,
-                     usage=usage,
-                     dash_s_do='setsingle')
-
-    server.parse(errex=1)
-    server.main()
-
-
 if __name__ == '__main__':
-    main()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('mount')
+    args = parser.parse_args()
+
+    logging.basicConfig(level=logging.DEBUG)
+    fuse = FUSE(
+        RubrikFS(), args.mount, foreground=True, ro=True, allow_other=True)
