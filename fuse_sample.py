@@ -8,10 +8,8 @@ from fuse import FUSE, FuseOSError, Operations, LoggingMixIn, fuse_get_context
 import requests
 
 
-# rubrikHost = "shrd1-rbk01.rubrikdemo.com"
-rubrikHost = "blah"
-# rubrikKey = str("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyOWNiNzFhMS0yZGIwLTRlZGQtYjA1Mi1kNmQ1NWRlMjBiOTRfMmY2MzFmYjItNzUyMi00ZTcwLWFjNzgtMzk1Y2EzNTIwMmRjIiwiaXNzIjoiMjljYjcxYTEtMmRiMC00ZWRkLWIwNTItZDZkNTVkZTIwYjk0IiwianRpIjoiYjNjYzUzYTUtNDIwMi00ZDc5LWE4ZDctMmFjNGI3ODk3YmU3In0.CyijHNB9H1-VTPD0MHcnvegHI0e0ZoA80y8n_W0yliI")
-rubrikKey = "blah"
+rubrikHost = "shrd1-rbk01.rubrikdemo.com"
+rubrikKey = str("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyOWNiNzFhMS0yZGIwLTRlZGQtYjA1Mi1kNmQ1NWRlMjBiOTRfMmY2MzFmYjItNzUyMi00ZTcwLWFjNzgtMzk1Y2EzNTIwMmRjIiwiaXNzIjoiMjljYjcxYTEtMmRiMC00ZWRkLWIwNTItZDZkNTVkZTIwYjk0IiwianRpIjoiYjNjYzUzYTUtNDIwMi00ZDc5LWE4ZDctMmFjNGI3ODk3YmU3In0.CyijHNB9H1-VTPD0MHcnvegHI0e0ZoA80y8n_W0yliI")
 rubrikSnapshot = str("92281431-bfb6-4a76-aa75-e5c33a0d1958")
 
 
@@ -21,7 +19,7 @@ class RubrikFS(LoggingMixIn, Operations):
         return ['.', '..', 'uid', 'gid', 'pid']
 
 
-class Rubrik(rubrikHost, rubrikKey):
+class Rubrik:
     class RubrikException(Exception):
         def __init__(self, msg):
             self.msg = msg
