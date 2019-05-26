@@ -16,7 +16,7 @@ rubrikSnapshot = str("92281431-bfb6-4a76-aa75-e5c33a0d1958")
 # Simple dump of a directory
 class RubrikFS(LoggingMixIn, Operations):
     def readdir(self, path, offset):
-        return ['.', '..', 'uid', 'gid', 'pid']
+        return ['.', '..', Rubrik.browse_path(rubrikSnapshot)]
 
 
 class Rubrik:
