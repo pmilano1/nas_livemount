@@ -80,5 +80,6 @@ if __name__ == '__main__':
 #    fuse = FUSE(
 #        RubrikFS(), args.mount, foreground=True, ro=True, allow_other=True)
     rubrik = Rubrik(rubrikHost, rubrikKey)
-    print(rubrik.browse_path(rubrikSnapshot))
+    out = rubrik.browse_path(rubrikSnapshot)
+    print out
 
