@@ -55,7 +55,7 @@ class Rubrik:
       try:
         r = getattr(requests, method)(uri, data=data, verify=False, headers=self.headers)
         r.raise_for_status()
-        print(r)
+        return r.json()
       except requests.RequestException as e:
         print
         e
