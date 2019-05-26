@@ -43,8 +43,7 @@ class Rubrik:
         requests.packages.urllib3.disable_warnings()
 
     def browse_path(self, snap="", path="/"):
-        data = self.apicall(self.callFilesetBrowse.format(snap) + "?path=" + path)
-        print(data)
+        return self.apicall(self.callFilesetBrowse.format(snap) + "?path=" + path)
 
     def apicall(self, call, method="get", data="", internal=False):
       uri = self.baseurl + call
@@ -71,13 +70,14 @@ class Rubrik:
 
 
 if __name__ == '__main__':
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument('mount')
-    args = parser.parse_args()
+#    import argparse
+#    parser = argparse.ArgumentParser()
+#    parser.add_argument('mount')
+#    args = parser.parse_args()
+#
+#    logging.basicConfig(level=logging.DEBUG)
+#    fuse = FUSE(
+#        RubrikFS(), args.mount, foreground=True, ro=True, allow_other=True)
+    rubrik = Rubrik(rubrikHost, rubrikKey)
+    print(rubrik.browse_path(rubrikSnapshot))
 
-    print(args)
-
-    logging.basicConfig(level=logging.DEBUG)
-    fuse = FUSE(
-        RubrikFS(), args.mount, foreground=True, ro=True, allow_other=True)
