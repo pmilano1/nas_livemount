@@ -91,5 +91,5 @@ if __name__ == '__main__':
 
     objs = ['.', '..']
     for obj in rubrik.browse_path(rubrikSnapshot)['data']:
-        objs += obj['filename']
+        objs.append(obj['filename'])
     print(objs)
