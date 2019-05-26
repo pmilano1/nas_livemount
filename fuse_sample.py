@@ -23,7 +23,7 @@ class RubrikFS(LoggingMixIn, Operations):
         objs = ['.', '..']
         for obj in self.rubrik.browse_path(rubrikSnapshot)['data']:
             objs += obj['filename']
-        print objs
+        print(objs)
         return objs
 
 
