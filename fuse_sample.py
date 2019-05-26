@@ -82,5 +82,5 @@ if __name__ == '__main__':
 #        RubrikFS(), args.mount, foreground=True, ro=True, allow_other=True)
     rubrik = Rubrik(rubrikHost, rubrikKey)
     out = rubrik.browse_path(rubrikSnapshot)
-    print(out)
+    print(out['data'])
 
