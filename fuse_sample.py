@@ -52,7 +52,7 @@ class Rubrik:
       else:
         uri = self.baseurl + call
       try:
-        r = getattr(requests, method)(uri, data=data, verify=False, auth=self.auth)
+        r = getattr(requests, method)(uri, data=data, verify=False, headers=self.headers)
         r.raise_for_status()
       except requests.RequestException as e:
         print
