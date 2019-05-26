@@ -4,6 +4,7 @@ import logging
 from errno import ENOENT
 from stat import S_IFDIR, S_IFREG
 from time import time
+import urllib.parse as ul
 from fuse import FUSE, FuseOSError, Operations, LoggingMixIn, fuse_get_context
 import requests
 
@@ -35,15 +36,15 @@ class Rubrik:
         self.rubrik_api_key = rubrik_api_key
         self.headers = {'Content-Type': 'application/json', 'Accept': 'application/json',
                         'Authorization': 'Bearer ' + self.rubrik_api_key}
-        self.callFileSets = "/fileset"
-        self.callFileSetDetail = "/fileset/{}"
-        self.callFilesetBrowse = "/fileset/snapshot/{}/browse"
+        self.callFileSets = "fileset"
+        self.callFileSetDetail = "fileset/{}"
+        self.callFilesetBrowse = "fileset/snapshot/{}/browse?path={}"
 
         # Disable ssl warnings for Requests
         requests.packages.urllib3.disable_warnings()
 
     def browse_path(self, snap="", path="/"):
-        return self.apicall(self.callFilesetBrowse.format(snap) + "?path=" + path)
+        return self.apicall(self.callFilesetBrowse.format(snap, ul.quote_plus(path)))
 
     def apicall(self, call, method="get", data="", internal=False):
       uri = self.baseurl + call
@@ -57,7 +58,7 @@ class Rubrik:
       except requests.RequestException as e:
         print
         e
-        raise self.RubrikException("POST Call Failed: " + str(e))
+        raise self.RubrikException("Rubrik API Call Failed: " + str(e))
       except (requests.exceptions.HTTPError, requests.exceptions.RequestException) as e:
         print
         e
