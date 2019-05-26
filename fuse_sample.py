@@ -17,7 +17,7 @@ rubrikSnapshot = str("92281431-bfb6-4a76-aa75-e5c33a0d1958")
 # Simple dump of a directory
 class RubrikFS(LoggingMixIn, Operations):
     def __init__(self):
-        self.rubrik = Rubrik(rubrikKey,rubrikKey)
+        self.rubrik = Rubrik(rubrikKey, rubrikKey)
 
     def readdir(self, path, offset):
         objs = ['.', '..']
@@ -84,7 +84,7 @@ if __name__ == '__main__':
     parser.add_argument('mount')
     args = parser.parse_args()
 
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.ERROR)
     fuse = FUSE(
         RubrikFS(), args.mount, foreground=True, ro=True, allow_other=True)
 #    rubrik = Rubrik(rubrikHost, rubrikKey)
