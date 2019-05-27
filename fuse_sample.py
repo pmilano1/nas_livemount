@@ -41,7 +41,7 @@ class RubrikFS(LoggingMixIn, Operations):
                         if obj['fileMode'] == "directory":
                             st = os.lstat('/tmp')
                         else:
-                            st = os.lstat('/tmp/vagrant_shell')
+                            st = os.lstat('/tmp/vagrant-shell')
                         out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
                                                        'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
                                                        'st_uid'))
