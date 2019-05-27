@@ -6,6 +6,7 @@ from stat import S_IFDIR, S_IFREG
 from time import time
 import urllib.parse as ul
 import os
+import re
 from fuse import FUSE, FuseOSError, Operations, LoggingMixIn, fuse_get_context
 import requests
 
@@ -31,6 +32,8 @@ class RubrikFS(LoggingMixIn, Operations):
 
     def readdir(self, path, fh):
         print("*****************************" + path)
+        path = re.sub(r'[^\/]\s+', '', path)
+
         objs = ['.', '..']
         for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
             objs.append(obj['filename'])
