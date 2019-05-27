@@ -23,6 +23,9 @@ class RubrikFS(LoggingMixIn, Operations):
         self.rubrik = Rubrik(rubrikHost, rubrikKey)
 
     def getattr(self, path, fh=None):
+        out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
+                                                       'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
+                                                       'st_uid'))
         if rubrikOperatingSystemType == "Windows":
             st = None
             name = None
@@ -39,13 +42,8 @@ class RubrikFS(LoggingMixIn, Operations):
                             st = os.lstat('/tmp')
                         else:
                             st = os.lstat('/tmp/vagrant_shell')
-                        out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
-                            'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
-                            'st_uid'))
                         out['st_size'] = obj['size']
                         out['st_mtime'] = (datetime.strptime(obj['lastModified'], '%Y-%m-%dT%H:%M:%S+0000') - datetime(1970, 1, 1)).total_seconds()
-
-        print(out)
         return out
 
     def readdir(self, path, fh):
