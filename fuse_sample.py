@@ -17,13 +17,16 @@ rubrikSnapshot = str("92281431-bfb6-4a76-aa75-e5c33a0d1958")
 rubrikOperatingSystemType = "Windows"
 
 
-# Simple dump of a directory
 class RubrikFS(LoggingMixIn, Operations):
     def __init__(self):
         self.rubrik = Rubrik(rubrikHost, rubrikKey)
 
     def getattr(self, path, fh=None):
-        print("**********ATTRS for " + path + " - " + str(fh))
+        if rubrikOperatingSystemType == "Windows":
+            path = re.sub(r'^\/(\S+.*)', '\\1', path)
+            if not path.startswith("/"):
+                path = path.replace('/', '\\')
+        print(path)
         st = os.lstat('/tmp')
         return dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
                                                         'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
