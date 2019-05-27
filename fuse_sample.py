@@ -37,7 +37,7 @@ class RubrikFS(LoggingMixIn, Operations):
                     name = path
                 for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
                     if path[1] and obj['filename'] == name:
-                        out.st_size = obj['size']
+                        out['st_size'] = obj['size']
         print(out)
         return out
 
