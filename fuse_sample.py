@@ -23,7 +23,7 @@ class RubrikFS(LoggingMixIn, Operations):
         self.rubrik = Rubrik(rubrikHost, rubrikKey)
 
     def getattr(self, path, fh=None):
-        print("**********ATTRS for " + path + " - " + fh)
+        print("**********ATTRS for " + path + " - " + str(fh))
         st = os.lstat('/tmp')
         return dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
                                                         'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
