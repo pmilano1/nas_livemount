@@ -20,21 +20,13 @@ class RubrikFS(LoggingMixIn, Operations):
         self.rubrik = Rubrik(rubrikHost, rubrikKey)
 
     def getattr(self, path, fh=None):
-        if path == '/':
-            st = dict(st_mode=(S_IFDIR | 0o755), st_nlink=2)
-        elif path == '/uid':
-            size = len('%s\n' % uid)
-            st = dict(st_mode=(S_IFREG | 0o444), st_size=size)
-        elif path == '/gid':
-            size = len('%s\n' % gid)
-            st = dict(st_mode=(S_IFREG | 0o444), st_size=size)
-        elif path == '/pid':
-            size = len('%s\n' % pid)
-            st = dict(st_mode=(S_IFREG | 0o444), st_size=size)
-        else:
-            raise FuseOSError(ENOENT)
-        st['st_ctime'] = st['st_mtime'] = st['st_atime'] = time()
-        return st
+        st = os.lstat('/tmp')
+        if 'image/' in path:
+            st = os.lstat('/tmp/vagrant_shell')
+
+        return dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
+                                                        'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
+                                                        'st_uid'))
 
     def readdir(self, path, fh):
         objs = ['.', '..']
