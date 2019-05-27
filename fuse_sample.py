@@ -19,9 +19,26 @@ class RubrikFS(LoggingMixIn, Operations):
     def __init__(self):
         self.rubrik = Rubrik(rubrikHost, rubrikKey)
 
-    def readdir(self, path, offset):
+    def getattr(self, path, fh=None):
+        if path == '/':
+            st = dict(st_mode=(S_IFDIR | 0o755), st_nlink=2)
+        elif path == '/uid':
+            size = len('%s\n' % uid)
+            st = dict(st_mode=(S_IFREG | 0o444), st_size=size)
+        elif path == '/gid':
+            size = len('%s\n' % gid)
+            st = dict(st_mode=(S_IFREG | 0o444), st_size=size)
+        elif path == '/pid':
+            size = len('%s\n' % pid)
+            st = dict(st_mode=(S_IFREG | 0o444), st_size=size)
+        else:
+            raise FuseOSError(ENOENT)
+        st['st_ctime'] = st['st_mtime'] = st['st_atime'] = time()
+        return st
+
+    def readdir(self, path, fh):
         objs = ['.', '..']
-        for obj in self.rubrik.browse_path(rubrikSnapshot)['data']:
+        for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
             objs.append(obj['filename'])
         return objs
 
