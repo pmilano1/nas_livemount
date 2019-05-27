@@ -32,7 +32,7 @@ class RubrikFS(LoggingMixIn, Operations):
                 path = path.replace('/', '\\')
                 path = path.rsplit('\\', 1)
                 for obj in self.rubrik.browse_path(rubrikSnapshot, path[0])['data']:
-                    if obj['filename'] == path[1]:
+                    if path[1] and obj['filename'] == path[1]:
                         out.st_size = obj['size']
         print(out)
         return out
