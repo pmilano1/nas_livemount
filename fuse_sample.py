@@ -34,7 +34,8 @@ class RubrikFS(LoggingMixIn, Operations):
     def readdir(self, path, fh):
         if rubrikOperatingSystemType == "Windows":
             path = re.sub(r'^\/(\S+.*)', '\\1', path)
-            path = re.sub(r'\/', '\\', path)
+            if path != '/':
+                path = re.sub(r'\/', '\\', path)
         objs = ['.', '..']
         for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
             objs.append(obj['filename'])
