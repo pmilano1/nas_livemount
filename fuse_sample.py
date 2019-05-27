@@ -36,7 +36,7 @@ class RubrikFS(LoggingMixIn, Operations):
         if rubrikOperatingSystemType == "Windows":
             path = re.sub(r'^\/(\S+.*)', '\\1', path)
             if not path.startswith("/"):
-                path = re.sub(r'/', '\\', path)
+                path = path.replace('/', '\\')
         print("********************************" + path)
         objs = ['.', '..']
         for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
