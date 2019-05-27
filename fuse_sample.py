@@ -22,19 +22,18 @@ class RubrikFS(LoggingMixIn, Operations):
         self.rubrik = Rubrik(rubrikHost, rubrikKey)
 
     def getattr(self, path, fh=None):
+        st = os.lstat('/tmp')
+        out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
+                                                       'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
+                                                       'st_uid'))
         if rubrikOperatingSystemType == "Windows":
             path = re.sub(r'^\/(\S+.*)', '\\1', path)
             if not path.startswith("/"):
                 path = path.replace('/', '\\')
                 path = path.rsplit('\\', 1)
-#                for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
-#                    if obj['filename'] == path[1]:
-#                        #Add shit here
-        st = os.lstat('/tmp')
-        print(st)
-        out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
-                                                        'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
-                                                        'st_uid'))
+                for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
+                    if obj['filename'] == path[1]:
+                        out.st_size = obj['size']
         return out
 
     def readdir(self, path, fh):
