@@ -5,6 +5,7 @@ from errno import ENOENT
 from stat import S_IFDIR, S_IFREG
 from time import time
 import urllib.parse as ul
+import os
 from fuse import FUSE, FuseOSError, Operations, LoggingMixIn, fuse_get_context
 import requests
 
