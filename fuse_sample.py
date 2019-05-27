@@ -30,9 +30,11 @@ class RubrikFS(LoggingMixIn, Operations):
             path = re.sub(r'^\/(\S+.*)', '\\1', path)
             if not path.startswith("/"):
                 path = path.replace('/', '\\')
-                path = path.rsplit('\\', 1)
-                for obj in self.rubrik.browse_path(rubrikSnapshot, path[0])['data']:
-                    if path[1] and obj['filename'] == path[1]:
+                [path, name] = path.rsplit('\\', 1)
+                if not name:
+                    name = path
+                for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
+                    if path[1] and obj['filename'] == name:
                         out.st_size = obj['size']
         print(out)
         return out
