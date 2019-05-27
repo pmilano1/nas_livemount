@@ -27,6 +27,7 @@ class RubrikFS(LoggingMixIn, Operations):
                                                        'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
                                                        'st_uid'))
         if rubrikOperatingSystemType == "Windows":
+            name = None
             path = re.sub(r'^\/(\S+.*)', '\\1', path)
             if not path.startswith("/"):
                 path = path.replace('/', '\\')
