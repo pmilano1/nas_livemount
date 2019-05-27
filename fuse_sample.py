@@ -39,7 +39,7 @@ class RubrikFS(LoggingMixIn, Operations):
                 for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
                     if path[1] and obj['filename'] == name:
                         out['st_size'] = obj['size']
-                        out['st_mtime'] = (datetime.strptime(obj['mtime'], '%Y-%m-%dT%H:%M:%S+0000') - datetime(1970, 1, 1)).total_seconds()
+                        out['st_mtime'] = (datetime.strptime(obj['lastModified'], '%Y-%m-%dT%H:%M:%S+0000') - datetime(1970, 1, 1)).total_seconds()
         print(out)
         return out
 
