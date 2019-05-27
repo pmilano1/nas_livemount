@@ -27,6 +27,7 @@ class RubrikFS(LoggingMixIn, Operations):
             if not path.startswith("/"):
                 path = path.replace('/', '\\')
                 path = path.rsplit('\\', 1)
+                print(path)
         st = os.lstat('/tmp')
         return dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
                                                         'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
