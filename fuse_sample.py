@@ -6,6 +6,7 @@ from stat import S_IFDIR, S_IFREG
 from time import time
 import urllib.parse as ul
 import os
+import datetime
 import re
 from fuse import FUSE, FuseOSError, Operations, LoggingMixIn, fuse_get_context
 import requests
@@ -38,6 +39,7 @@ class RubrikFS(LoggingMixIn, Operations):
                 for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
                     if path[1] and obj['filename'] == name:
                         out['st_size'] = obj['size']
+                        out['st_mtime'] = datetime.obj['mtime'].timestamp()
         print(out)
         return out
 
