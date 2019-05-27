@@ -35,8 +35,6 @@ class RubrikFS(LoggingMixIn, Operations):
                     name = path
                 for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
                     if obj['filename'] == name:
-                        out['st_size'] = obj['size']
-                        out['st_mtime'] = (datetime.strptime(obj['lastModified'], '%Y-%m-%dT%H:%M:%S+0000') - datetime(1970, 1, 1)).total_seconds()
                         if obj['fileMode'] == "directory":
                             st = os.lstat('/tmp')
                         else:
@@ -44,6 +42,8 @@ class RubrikFS(LoggingMixIn, Operations):
                         out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
                             'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
                             'st_uid'))
+                        out['st_size'] = obj['size']
+                        out['st_mtime'] = (datetime.strptime(obj['lastModified'], '%Y-%m-%dT%H:%M:%S+0000') - datetime(1970, 1, 1)).total_seconds()
 
         print(out)
         return out
