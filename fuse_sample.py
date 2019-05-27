@@ -34,6 +34,7 @@ class RubrikFS(LoggingMixIn, Operations):
                 for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
                     if obj['filename'] == path[1]:
                         out.st_size = obj['size']
+        print(out)
         return out
 
     def readdir(self, path, fh):
