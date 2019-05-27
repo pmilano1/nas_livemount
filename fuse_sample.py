@@ -32,9 +32,10 @@ class RubrikFS(LoggingMixIn, Operations):
 #                        #Add shit here
         st = os.lstat('/tmp')
         print(st)
-        return dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
+        out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
                                                         'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
                                                         'st_uid'))
+        return out
 
     def readdir(self, path, fh):
         if rubrikOperatingSystemType == "Windows":
