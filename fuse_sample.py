@@ -30,8 +30,9 @@ class RubrikFS(LoggingMixIn, Operations):
                                                         'st_uid'))
 
     def readdir(self, path, fh):
+        print(path)
         objs = ['.', '..']
-        for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
+        for obj in self.rubrik.browse_path(rubrikSnapshot, ul.quoteplus(path))['data']:
             objs.append(obj['filename'])
         return objs
 
