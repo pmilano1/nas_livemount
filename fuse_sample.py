@@ -30,7 +30,7 @@ class RubrikFS(LoggingMixIn, Operations):
             path = re.sub(r'^\/(\S+.*)', '\\1', path)
             if not path.startswith("/"):
                 path = path.replace('/', '\\')
-                if path.match('\\'):
+                if "\\" in path:
                     [path, name] = path.rsplit('\\', 1)
                 if not name:
                     name = path
