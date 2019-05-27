@@ -14,6 +14,7 @@ import requests
 rubrikHost = "shrd1-rbk01.rubrikdemo.com"
 rubrikKey = str("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyOWNiNzFhMS0yZGIwLTRlZGQtYjA1Mi1kNmQ1NWRlMjBiOTRfMmY2MzFmYjItNzUyMi00ZTcwLWFjNzgtMzk1Y2EzNTIwMmRjIiwiaXNzIjoiMjljYjcxYTEtMmRiMC00ZWRkLWIwNTItZDZkNTVkZTIwYjk0IiwianRpIjoiYjNjYzUzYTUtNDIwMi00ZDc5LWE4ZDctMmFjNGI3ODk3YmU3In0.CyijHNB9H1-VTPD0MHcnvegHI0e0ZoA80y8n_W0yliI")
 rubrikSnapshot = str("92281431-bfb6-4a76-aa75-e5c33a0d1958")
+rubrikOperatingSystemType = "Windows"
 
 
 # Simple dump of a directory
@@ -31,9 +32,9 @@ class RubrikFS(LoggingMixIn, Operations):
                                                         'st_uid'))
 
     def readdir(self, path, fh):
-        path = re.sub(r'^\/(\S+.*)', '\\1', path)
-        print("*****************************" + path)
-
+        if rubrikOperatingSystemType == "Windows":
+            path = re.sub(r'^\/(\S+.*)', '\\1', path)
+            path = re.sub(r'\/', '\\', path)
         objs = ['.', '..']
         for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
             objs.append(obj['filename'])
