@@ -59,7 +59,8 @@ class RubrikFS(LoggingMixIn, Operations):
                 path = path.replace('/', '\\')
         objs = ['.', '..']
         for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
-            objs.append(obj['filename'].replace(' ', '\ '))
+            objs.append(obj['filename'])
+            #objs.append(obj['filename'].replace(' ', '\ '))
         return objs
 
 
@@ -69,7 +70,7 @@ class Rubrik:
             self.msg = msg
 
         def __str__(self):
-            return self.msg
+            eddirpluseturn self.msg
 
     def __init__(self, rubrik_addr, rubrik_api_key):
         # Prompt for configuration info
