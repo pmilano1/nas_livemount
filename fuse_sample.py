@@ -84,7 +84,7 @@ class Rubrik:
         requests.packages.urllib3.disable_warnings()
 
     def browse_path(self, snap="", path=""):
-        return self.apicall(self.callFilesetBrowse.format(snap, ul.quote_plus('/' + path)))
+        return self.apicall(self.callFilesetBrowse.format(snap, ul.quote_plus(path)))
 
     def apicall(self, call, method="get", data="", internal=False):
       uri = self.baseurl + call
