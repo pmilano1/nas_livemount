@@ -70,7 +70,7 @@ class Rubrik:
             self.msg = msg
 
         def __str__(self):
-            eddirpluseturn self.msg
+            return self.msg
 
     def __init__(self, rubrik_addr, rubrik_api_key):
         # Prompt for configuration info
