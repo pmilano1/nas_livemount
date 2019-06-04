@@ -25,7 +25,6 @@ rubrikOperatingSystemType = "Windows"
 class RubrikFS(LoggingMixIn, Operations):
     def __init__(self):
         self.rubrik = Rubrik(rubrikHost, rubrikKey)
-
     def getattr(self, path, fh=None):
         st = os.lstat('/tmp')
         out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
@@ -43,9 +42,9 @@ class RubrikFS(LoggingMixIn, Operations):
                 for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
                     if obj['filename'] == name:
                         if obj['fileMode'] == "directory":
-                            st = os.lstat('/tmp')
+                            st = os.lstat('test_dir')
                         else:
-                            st = os.lstat('/tmp/vagrant-shell')
+                            st = os.lstat('test_dir/test_file')
                         out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
                                                        'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
                                                        'st_uid'))
