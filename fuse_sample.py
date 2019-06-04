@@ -59,8 +59,7 @@ class RubrikFS(LoggingMixIn, Operations):
                 path = path.replace('/', '\\')
         objs = ['.', '..']
         for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
-            objs.append(obj['filename'])
-            print(objs)
+            objs.append(obj['filename'].replace(' ', '\ '))
         return objs
 
 
