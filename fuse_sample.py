@@ -14,7 +14,7 @@ import requests
 
 rubrikHost = "shrd1-rbk01.rubrikdemo.com"
 rubrikKey = str("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyOWNiNzFhMS0yZGIwLTRlZGQtYjA1Mi1kNmQ1NWRlMjBiOTRfMmY2MzFmYjItNzUyMi00ZTcwLWFjNzgtMzk1Y2EzNTIwMmRjIiwiaXNzIjoiMjljYjcxYTEtMmRiMC00ZWRkLWIwNTItZDZkNTVkZTIwYjk0IiwianRpIjoiYjNjYzUzYTUtNDIwMi00ZDc5LWE4ZDctMmFjNGI3ODk3YmU3In0.CyijHNB9H1-VTPD0MHcnvegHI0e0ZoA80y8n_W0yliI")
-rubrikSnapshot = str("6961975c-2346-4365-8bc9-ffeb930ee7a8")
+rubrikSnapshot = str("20200577-fa4d-4953-a00a-6aacb6869cfa")
 rubrikOperatingSystemType = "Windows"
 
 
