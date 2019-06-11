@@ -38,7 +38,7 @@ class RubrikDB:
                     "last_modified string, "
                     "size int, "
                     "filemode string, "
-                    "statusMessage string, "
+                    "statusMessage string "
                     ");")
 
 
