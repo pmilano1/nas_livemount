@@ -59,7 +59,7 @@ class RubrikDB:
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
                 out.append(obj['filename'])
                 mypath = obj['path'].replace(obj['filename'], '')
-                self.cur.execute("insert into filestore ("
+                cur.execute("insert into filestore ("
                                  "id, filename, fullPath, path, lastModified, "
                                  "size, filemode, statusMessage"
                                  ") values ({},'{}','{}','{}'{},'{}','{}');".format('',
