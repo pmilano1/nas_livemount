@@ -25,7 +25,7 @@ rubrikOperatingSystemType = "Windows"
 
 class RubrikDB:
     def __init__(self):
-        con = psycopg2.connect(host='localhost', sslmode='disable', port=26257)
+        con = psycopg2.connect(host='localhost', sslmode='disable', port=26257, user='root')
         con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cur = con.cursor()
         cur.execute("CREATE DATABASE IF NOT EXISTS {};".format(rubrikSnapshot))
