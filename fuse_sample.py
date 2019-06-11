@@ -38,6 +38,7 @@ class RubrikDB:
         cur.execute("CREATE TABLE IF NOT EXISTS filestore ( "
                     "id UUID PRIMARY KEY DEFAULT gen_random_uuid()"
                     "filename string, "
+                    "fullPath string, "
                     "path string, "
                     "lastModified string, "
                     "size int, "
@@ -47,7 +48,7 @@ class RubrikDB:
                     ");")
 
     def readdir(self, path):
-        self.cur.execute("select from filestore where path='{}';".format(path))
+        self.cur.execute("select from filestore where fullPath='{}';".format(path))
         out = []
         if self.cur.rowcount > 0:
             print("Found a row")
@@ -57,11 +58,12 @@ class RubrikDB:
                 out.append(obj['filename'])
                 mypath = obj['path'].replace(obj['filename'], '')
                 self.cur.execute("insert into filestore ("
-                                 "id, filename, path, lastModified, "
+                                 "id, filename, fullPath, path, lastModified, "
                                  "size, filemode, statusMessage"
                                  ") values ({},'{}','{}','{}'{},'{}','{}');".format('',
                                                                                     obj['filename'],
                                                                                     obj['path'],
+                                                                                    mypath,
                                                                                     obj['lastModified'],
                                                                                     obj['size'],
                                                                                     obj['fileMode'],
@@ -69,13 +71,8 @@ class RubrikDB:
                                                                                     ))
         return out
 
-
-#    def getattr(self, path):
-
-
-class RubrikFS(LoggingMixIn, Operations):
-
-    def getattr(self, path, fh=None):
+    def getattr(self, path):
+        self.cur.execute("select from filestore where fullPath='{}';".format(path))
         st = os.lstat('/tmp')
         out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
                                                        'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
@@ -89,28 +86,42 @@ class RubrikFS(LoggingMixIn, Operations):
                     [path, name] = path.rsplit('\\', 1)
                 if not name:
                     name = path
-                for obj in self.rubrikdb.get(path):
-                    if obj['filename'] == name:
-                        if obj['fileMode'] == "directory":
-                            st = os.lstat('test_dir')
-                        else:
-                            st = os.lstat('test_dir/test_file')
-                        out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
-                                                                       'st_gid', 'st_mode', 'st_mtime', 'st_nlink',
-                                                                       'st_size',
-                                                                       'st_uid'))
-                        out['st_size'] = obj['size']
-                        out['st_mtime'] = (
-                                    datetime.strptime(obj['lastModified'], '%Y-%m-%dT%H:%M:%S+0000') - datetime(1970, 1,
-                                                                                                                1)).total_seconds()
+        if self.cur.rowcount > 0:
+            print("Found a row")
+        else:
+            print("No rows found")
+            for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
+                if obj['filename'] == name:
+                    if obj['fileMode'] == "directory":
+                        st = os.lstat('test_dir')
+                    else:
+                        st = os.lstat('test_dir/test_file')
+                    out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
+                                                                   'st_gid', 'st_mode', 'st_mtime', 'st_nlink',
+                                                                   'st_size',
+                                                                   'st_uid'))
+                    out['st_size'] = obj['size']
+                    out['st_mtime'] = (
+                            datetime.strptime(obj['lastModified'],
+                                              '%Y-%m-%dT%H:%M:%S+0000')
+                            - datetime(1970, 1, 1)).total_seconds()
+
         return out
+
+
+class RubrikFS(LoggingMixIn, Operations):
+    def __init__(self):
+        self.rubrikdb = RubrikDB()
+
+    def getattr(self, path, fh=None):
+        return self.rubrikdb.getattr(path)
 
     def readdir(self, path):
         if rubrikOperatingSystemType == "Windows":
             path = re.sub(r'^\/(\S+.*)', '\\1', path)
             if not path.startswith("/"):
                 path = path.replace('/', '\\')
-        objs = ['.', '..', self.rubrik.readdir(path)]
+        objs = ['.', '..', self.rubrikdb.readdir(path)]
         return objs
 
 
