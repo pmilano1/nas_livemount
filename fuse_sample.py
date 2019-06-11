@@ -119,7 +119,7 @@ class RubrikFS(LoggingMixIn, Operations):
     def getattr(self, path, fh=None):
         return self.rubrikdb.db_getattr(path)
 
-    def readdir(self, path):
+    def readdir(self, path, fh):
         if rubrikOperatingSystemType == "Windows":
             path = re.sub(r'^\/(\S+.*)', '\\1', path)
             if not path.startswith("/"):
