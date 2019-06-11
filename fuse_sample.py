@@ -53,9 +53,9 @@ class RubrikDB:
         cur.execute("select * from filestore where fullPath='{}';".format(path))
         out = []
         if cur.rowcount > 0:
-            print("Found a row")
+            print("Found {} rows in readdir using {}".format(cur.rowcount,path))
         else:
-            print("No rows found")
+            print("No rows found in readdir")
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
                 out.append(obj['filename'])
                 mypath = obj['path'].replace(obj['filename'], '')
@@ -90,9 +90,9 @@ class RubrikDB:
                 if not name:
                     name = path
         if cur.rowcount > 0:
-            print("Found a row")
+            print("Found {} rows in getattr using {}".format(cur.rowcount,path))
         else:
-            print("No rows found")
+            print("No rows found in getattr")
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
                 if obj['filename'] == name:
                     if obj['fileMode'] == "directory":
