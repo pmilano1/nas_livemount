@@ -29,7 +29,7 @@ class RubrikDB:
         con = psycopg2.connect(host='localhost', sslmode='disable', port=26257, user='root')
         con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cur = con.cursor()
-        cur.execute("CREATE DATABASE IF NOT EXISTS _{};".format(self.dbname))
+        cur.execute("CREATE DATABASE IF NOT EXISTS {};".format(self.dbname))
         cur.execute("use {};".format(self.dbname))
         cur.execute("CREATE TABLE IF NOT EXISTS filestore ( "
                     "id INT PRIMARY KEY, "
