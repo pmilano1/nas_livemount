@@ -60,9 +60,9 @@ class RubrikDB:
                 out.append(obj['filename'])
                 mypath = obj['path'].replace(obj['filename'], '')
                 cur.execute("insert into filestore ("
-                                 "id, filename, fullPath, path, lastModified, "
+                                 "filename, fullPath, path, lastModified, "
                                  "size, filemode, statusMessage"
-                                 ") values ('','{}','{}','{}','{}','{}','{}','{}');".format(
+                                 ") values ('{}','{}','{}','{}','{}','{}','{}');".format(
                                                                                     obj['filename'],
                                                                                     obj['path'],
                                                                                     mypath,
