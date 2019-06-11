@@ -10,9 +10,9 @@ import uuid
 from fuse import FUSE, FuseOSError, Operations, LoggingMixIn, fuse_get_context
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from datetime import datetime
-#from errno import ENOENT
-#from stat import S_IFDIR, S_IFREG
-#from time import time
+from errno import ENOENT
+from stat import S_IFDIR, S_IFREG
+from time import time
 
 rubrikHost = "amer1-rbk01.rubrikdemo.com"
 rubrikKey = str("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YTc1YWU5Yy0zMzdkLTQ3ZDMtYjUxNS01MmFmNzE5MTcxMmNfMmY2MzFmYjItNzUyMi00ZTcwLWFjNzgtMzk1Y2EzNTIwMmRjIiwiaXNzIjoiNWE3NWFlOWMtMzM3ZC00N2QzLWI1MTUtNTJhZjcxOTE3MTJjIiwianRpIjoiY2QwMzgyZTgtZTk1OC00MWUxLWJhNGUtYTc2YTY5N2NhZDM3In0.iGwpmJASop36bGCrMIZmRc8lRG34QLpCdYTBQ0K3Tvs")
