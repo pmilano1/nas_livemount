@@ -36,7 +36,7 @@ class RubrikDB:
         cur.execute("CREATE DATABASE IF NOT EXISTS {};".format(self.dbname))
         cur.execute("use {};".format(self.dbname))
         cur.execute("CREATE TABLE IF NOT EXISTS filestore ( "
-                    "id UUID PRIMARY KEY DEFAULT gen_random_uuid()"
+                    "id UUID PRIMARY KEY DEFAULT gen_random_uuid(), "
                     "filename string, "
                     "fullPath string, "
                     "path string, "
