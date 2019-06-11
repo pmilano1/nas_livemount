@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 from __future__ import print_function, absolute_import, division
 import logging
-from errno import ENOENT
-from stat import S_IFDIR, S_IFREG
-from time import time
-import urllib.parse as ul
 import os
-from datetime import datetime
 import re
-from fuse import FUSE, FuseOSError, Operations, LoggingMixIn, fuse_get_context
 import requests
 import psycopg2
+import urllib.parse as ul
+import uuid
+from fuse import FUSE, FuseOSError, Operations, LoggingMixIn, fuse_get_context
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+from datetime import datetime
+#from errno import ENOENT
+#from stat import S_IFDIR, S_IFREG
+#from time import time
 
 rubrikHost = "amer1-rbk01.rubrikdemo.com"
 rubrikKey = str("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YTc1YWU5Yy0zMzdkLTQ3ZDMtYjUxNS01MmFmNzE5MTcxMmNfMmY2MzFmYjItNzUyMi00ZTcwLWFjNzgtMzk1Y2EzNTIwMmRjIiwiaXNzIjoiNWE3NWFlOWMtMzM3ZC00N2QzLWI1MTUtNTJhZjcxOTE3MTJjIiwianRpIjoiY2QwMzgyZTgtZTk1OC00MWUxLWJhNGUtYTc2YTY5N2NhZDM3In0.iGwpmJASop36bGCrMIZmRc8lRG34QLpCdYTBQ0K3Tvs")
@@ -25,14 +26,15 @@ rubrikOperatingSystemType = "Windows"
 
 class RubrikDB:
     def __init__(self):
+        self.rubrik = Rubrik(rubrikHost, rubrikKey)
         self.dbname = "_{}".format(rubrikSnapshot.replace('-', '_'))
-        con = psycopg2.connect(host='localhost', sslmode='disable', port=26257, user='root')
-        con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-        cur = con.cursor()
+        self.con = psycopg2.connect(host='localhost', sslmode='disable', port=26257, user='root')
+        self.con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+        cur = self.con.cursor()
         cur.execute("CREATE DATABASE IF NOT EXISTS {};".format(self.dbname))
         cur.execute("use {};".format(self.dbname))
         cur.execute("CREATE TABLE IF NOT EXISTS filestore ( "
-                    "id INT PRIMARY KEY, "
+                    "id UUID PRIMARY KEY DEFAULT gen_random_uuid()"
                     "filename string, "
                     "path string, "
                     "last_modified string, "
@@ -42,11 +44,19 @@ class RubrikDB:
                     "index path_idx (path)"
                     ");")
 
+    def readdir(self, path):
+        self.cur.execute("select from filestore where path='{}';".format(path))
+        out = []
+        if self.cur.rowcount > 0:
+            print("Found a row")
+        else:
+            print("No rows found")
+            for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
+                out.append(obj['filename'])
+        return out
+
 
 class RubrikFS(LoggingMixIn, Operations):
-    def __init__(self):
-        self.rubrik = Rubrik(rubrikHost, rubrikKey)
-        self.rubrikdb = RubrikDB()
 
     def getattr(self, path, fh=None):
         st = os.lstat('/tmp')
@@ -62,7 +72,7 @@ class RubrikFS(LoggingMixIn, Operations):
                     [path, name] = path.rsplit('\\', 1)
                 if not name:
                     name = path
-                for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
+                for obj in self.rubrikdb.get(path):
                     if obj['filename'] == name:
                         if obj['fileMode'] == "directory":
                             st = os.lstat('test_dir')
@@ -75,15 +85,13 @@ class RubrikFS(LoggingMixIn, Operations):
                         out['st_mtime'] = (datetime.strptime(obj['lastModified'], '%Y-%m-%dT%H:%M:%S+0000') - datetime(1970, 1, 1)).total_seconds()
         return out
 
-    def readdir(self, path, fh):
+    def readdir(self, path):
         if rubrikOperatingSystemType == "Windows":
             path = re.sub(r'^\/(\S+.*)', '\\1', path)
             if not path.startswith("/"):
                 path = path.replace('/', '\\')
         objs = ['.', '..']
-        for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
-            objs.append(obj['filename'])
-            #objs.append(obj['filename'].replace(' ', '\ '))
+        objs.append(self.rubrikdb.readdir(path))
         return objs
 
 
