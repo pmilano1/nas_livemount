@@ -25,10 +25,12 @@ rubrikOperatingSystemType = "Windows"
 
 class RubrikDB:
     def __init__(self):
+        self.dbname = "_{}".format(rubrikSnapshot.replace('-', '_'))
         con = psycopg2.connect(host='localhost', sslmode='disable', port=26257, user='root')
         con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cur = con.cursor()
-        cur.execute("CREATE DATABASE IF NOT EXISTS _{};".format(rubrikSnapshot.replace('-', '_')))
+        cur.execute("CREATE DATABASE IF NOT EXISTS _{};".format(self.dbname))
+        cur.execute("use {};".format(self.dbname))
         cur.execute("SHOW TABLES;")
         print(cur.fetchall())
 
