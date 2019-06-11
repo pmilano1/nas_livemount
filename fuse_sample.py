@@ -48,9 +48,10 @@ class RubrikDB:
                     ");")
 
     def readdir(self, path):
-        self.cur.execute("select * from filestore where fullPath='{}';".format(path))
+        cur = self.con.cursor
+        cur.execute("select * from filestore where fullPath='{}';".format(path))
         out = []
-        if self.cur.rowcount > 0:
+        if cur.rowcount > 0:
             print("Found a row")
         else:
             print("No rows found")
@@ -72,7 +73,8 @@ class RubrikDB:
         return out
 
     def getattr(self, path):
-        self.cur.execute("select * from filestore where fullPath='{}';".format(path))
+        cur = self.con.cursor
+        cur.execute("select * from filestore where fullPath='{}';".format(path))
         st = os.lstat('/tmp')
         out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
                                                        'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
@@ -86,7 +88,7 @@ class RubrikDB:
                     [path, name] = path.rsplit('\\', 1)
                 if not name:
                     name = path
-        if self.cur.rowcount > 0:
+        if cur.rowcount > 0:
             print("Found a row")
         else:
             print("No rows found")
