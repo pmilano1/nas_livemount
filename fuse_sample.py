@@ -31,8 +31,15 @@ class RubrikDB:
         cur = con.cursor()
         cur.execute("CREATE DATABASE IF NOT EXISTS _{};".format(self.dbname))
         cur.execute("use {};".format(self.dbname))
-        cur.execute("SHOW TABLES;")
-        print(cur.fetchall())
+        cur.execute("CREATE TABLE IF NOT EXISTS filestore ( "
+                    "id INT PRIMARY KEY, "
+                    "filename string, "
+                    "path string, "
+                    "last_modified string, "
+                    "size int, "
+                    "filemode string, "
+                    "statusMessage string, "
+                    ");")
 
 
 class RubrikFS(LoggingMixIn, Operations):
