@@ -48,7 +48,7 @@ class RubrikDB:
                     ");")
 
     def readdir(self, path):
-        cur = self.con.cursor
+        cur = self.con.cursor()
         cur.execute("select * from filestore where fullPath='{}';".format(path))
         out = []
         if cur.rowcount > 0:
@@ -73,7 +73,7 @@ class RubrikDB:
         return out
 
     def getattr(self, path):
-        cur = self.con.cursor
+        cur = self.con.cursor()
         cur.execute("select * from filestore where fullPath='{}';".format(path))
         st = os.lstat('/tmp')
         out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
