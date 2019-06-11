@@ -48,7 +48,7 @@ class RubrikDB:
                     "index path_idx (path)"
                     ");")
 
-    def readdir(self, path):
+    def db_readdir(self, path):
         cur = self.con.cursor()
         cur.execute("select * from filestore where fullPath='{}';".format(path))
         out = []
@@ -73,7 +73,7 @@ class RubrikDB:
                                                                                     ))
         return out
 
-    def getattr(self, path):
+    def db_getattr(self, path):
         cur = self.con.cursor()
         cur.execute("select * from filestore where fullPath='{}';".format(path))
         st = os.lstat('/tmp')
@@ -117,14 +117,14 @@ class RubrikFS(LoggingMixIn, Operations):
         self.rubrikdb = RubrikDB()
 
     def getattr(self, path, fh=None):
-        return self.rubrikdb.getattr(path)
+        return self.rubrikdb.db_getattr(path)
 
     def readdir(self, path):
         if rubrikOperatingSystemType == "Windows":
             path = re.sub(r'^\/(\S+.*)', '\\1', path)
             if not path.startswith("/"):
                 path = path.replace('/', '\\')
-        objs = ['.', '..', self.rubrikdb.readdir(path)]
+        objs = ['.', '..', self.rubrikdb.db_readdir(path)]
         return objs
 
 
