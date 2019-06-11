@@ -10,7 +10,8 @@ from datetime import datetime
 import re
 from fuse import FUSE, FuseOSError, Operations, LoggingMixIn, fuse_get_context
 import requests
-
+import psycopg2
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 rubrikHost = "amer1-rbk01.rubrikdemo.com"
 rubrikKey = str("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YTc1YWU5Yy0zMzdkLTQ3ZDMtYjUxNS01MmFmNzE5MTcxMmNfMmY2MzFmYjItNzUyMi00ZTcwLWFjNzgtMzk1Y2EzNTIwMmRjIiwiaXNzIjoiNWE3NWFlOWMtMzM3ZC00N2QzLWI1MTUtNTJhZjcxOTE3MTJjIiwianRpIjoiY2QwMzgyZTgtZTk1OC00MWUxLWJhNGUtYTc2YTY5N2NhZDM3In0.iGwpmJASop36bGCrMIZmRc8lRG34QLpCdYTBQ0K3Tvs")
@@ -22,9 +23,19 @@ rubrikOperatingSystemType = "Windows"
 #rubrikSnapshot = str("20200577-fa4d-4953-a00a-6aacb6869cfa")
 
 
+class RubrikDB:
+    def __init__(self):
+        con = psycopg2.connect()
+        con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+        cur = con.cursor()
+        cur.execute("CREATE DATABASE IF NOT EXISTS {};".format(rubrikSnapshot))
+
+
 class RubrikFS(LoggingMixIn, Operations):
     def __init__(self):
         self.rubrik = Rubrik(rubrikHost, rubrikKey)
+        self.rubrikdb = RubrikDB()
+
     def getattr(self, path, fh=None):
         st = os.lstat('/tmp')
         out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
