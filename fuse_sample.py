@@ -124,7 +124,8 @@ class RubrikFS(LoggingMixIn, Operations):
             path = re.sub(r'^\/(\S+.*)', '\\1', path)
             if not path.startswith("/"):
                 path = path.replace('/', '\\')
-        objs = ['.', '..', self.rubrikdb.db_readdir(path)]
+        objs = ['.', '..']\
+        objs.extend(self.rubrikdb.db_readdir(path))
         return objs
 
 
