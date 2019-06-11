@@ -29,6 +29,8 @@ class RubrikDB:
         con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cur = con.cursor()
         cur.execute("CREATE DATABASE IF NOT EXISTS _{};".format(rubrikSnapshot.replace('-', '_')))
+        cur.execute("SHOW TABLES;")
+        print(cur.fetchall())
 
 
 class RubrikFS(LoggingMixIn, Operations):
