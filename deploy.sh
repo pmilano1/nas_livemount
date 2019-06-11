@@ -10,8 +10,3 @@ git clone https://github.com/pmilano1/nas_livemount.git
 echo "user_allow_other" >> /etc/fuse.conf
 mkdir nas_livemount/tmp
 chown -R vagrant:vagrant .
-echo 'Install CockroachDB'
-wget -qO- https://binaries.cockroachdb.com/cockroach-v19.1.1.linux-amd64.tgz | tar  xvz
-cp -i cockroach-v19.1.1.linux-amd64/cockroach /usr/local/bin
-echo 'Start CockroachDB'
-cockroach start --insecure --listen-addr=localhost &&
