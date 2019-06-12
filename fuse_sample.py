@@ -114,18 +114,16 @@ class RubrikDB:
         q = "select * from filestore where fullPath='{}';".format(path)
         cur.execute(q)
 
-        name = None
-
         # Check DB for Cache Values
         if cur.rowcount == 1:
             print("Found {} rows in getattr using {}".format(cur.rowcount, path))
             st = zip([desc[0] for desc in cur.description], cur.fetchone())
+            print("st: {}".format(st))
             out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
                                                            'st_gid', 'st_mode', 'st_mtime', 'st_nlink',
                                                            'st_size',
                                                            'st_uid'))
             print("Got out of : {}".format(out))
-
 
         # Carry on with API hit
         else:
