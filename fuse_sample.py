@@ -90,7 +90,7 @@ class RubrikDB:
                 cur.execute("insert into filestore ("
                             "filename, fullPath, path, lastModified, "
                             "size, filemode, statusMessage, st_atime, st_ctime, st_gid, st_mode, st_mtime, st_nlink, st_size, st_uid"
-                            ") values ('{}','{}','{}','{}','{}','{}','{}');".format(
+                            ") values ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');".format(
                     obj['filename'],  # File or directory name
                     fullpath,  # Full path in local filesystem
                     path,  # Path on Rubrik for query
