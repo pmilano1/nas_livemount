@@ -84,11 +84,14 @@ class RubrikDB:
         out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
                                                        'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
                                                        'st_uid'))
+        name = None
         if cur.rowcount > 0:
             print("Found {} rows in getattr using {}".format(cur.rowcount, path))
         else:
             print("No rows found in getattr")
             print("Query : {}".format(q))
+            if not name:
+                name = path
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
                 if obj['filename'] == name:
                     if obj['fileMode'] == "directory":
