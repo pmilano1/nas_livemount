@@ -127,7 +127,7 @@ class RubrikDB:
             if not name:
                 name = path
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
-                print("found {}".format(obj['filename']))
+                print("found {} and {}".format(obj['filename'],name))
                 if obj['filename'] == name:
                     if obj['fileMode'] == "directory" or obj['filemode'] == "drive":
                         st = os.lstat('test_dir')
