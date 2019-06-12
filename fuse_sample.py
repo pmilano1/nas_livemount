@@ -119,7 +119,7 @@ class RubrikDB:
         if cur.rowcount == 1:
             print("Found {} rows in getattr using {}".format(cur.rowcount, path))
             r = dict(zip([col.name for col in cur.description], cur.fetchone()))
-            print("Array is : {}".format(r))
+            print("Array is : {} and atime is {}".format(r,r.st_atime))
             out = dict((key, getattr(r, key)) for key in ('st_atime', 'st_ctime',
                                                           'st_gid', 'st_mode', 'st_mtime', 'st_nlink',
                                                           'st_size',
