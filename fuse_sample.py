@@ -51,7 +51,7 @@ class RubrikDB:
 
     def db_readdir(self, path):
         cur = self.con.cursor()
-        q = "select filename from filestore where fullPath='{}';".format(path)
+        q = "select filename from filestore where path='{}';".format(path)
         cur.execute(q)
         out = []
         join = ""
