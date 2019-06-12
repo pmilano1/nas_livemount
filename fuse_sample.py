@@ -124,7 +124,6 @@ class RubrikDB:
         else:
             print("No rows found in getattr")
             print("Query : {}".format(q))
-            if not name:
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
                 print("found {} and {}".format(obj['filename'],name))
                 if obj['fileMode'] == "directory" or obj['filemode'] == "drive":
