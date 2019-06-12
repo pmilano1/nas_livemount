@@ -67,8 +67,8 @@ class RubrikDB:
                             "size, filemode, statusMessage"
                             ") values ('{}','{}','{}','{}','{}','{}','{}');".format(
                     obj['filename'],
-                    obj['path'],
                     mydir,
+                    obj['path'],
                     obj['lastModified'],
                     obj['size'],
                     obj['fileMode'],
