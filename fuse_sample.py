@@ -54,12 +54,10 @@ class RubrikDB:
         q = "select filename from filestore where fullPath='{}';".format(path)
         cur.execute(q)
         out = []
+        join = ""
         if re.search(r'^[A-Z]:', path):
             print("In first match")
             join = "/"
-        if re.search(r'^/$', path):
-            print("In second match")
-            join = ""
         if cur.rowcount > 0:
             print("Found {} rows in readdir using {}".format(cur.rowcount, path))
             print("Query : {}".format(q))
