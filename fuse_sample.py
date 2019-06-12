@@ -56,7 +56,7 @@ class RubrikDB:
                     "st_nlink string, "
                     "st_size string, "
                     "st_uid string, "
-                    "file_local bool DEFAULT 0,"
+                    "file_local bool DEFAULT false,"
                     "index path_idx (path)"
                     ");")
 
