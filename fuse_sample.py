@@ -45,10 +45,10 @@ class RubrikDB:
                     "filename string, "
                     "fullPath string, "
                     "path string, "
-                    "lastModified string, "
-                    "size bigint, "
+                    #"lastModified string, "
+                    #"size bigint, "
                     "fileMode string, "
-                    "statusMessage string, "
+                    #"statusMessage string, "
                     "st_atime bigint, "
                     "st_ctime bigint , "
                     "st_gid int, "
@@ -91,14 +91,14 @@ class RubrikDB:
                 cur.execute("insert into filestore ("
                             "filename, fullPath, path, lastModified, "
                             "size, filemode, statusMessage, st_atime, st_ctime, st_gid, st_mode, st_mtime, st_nlink, st_size, st_uid"
-                            ") values ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');".format(
+                            ") values ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');".format(
                     obj['filename'],  # File or directory name
                     fullpath,  # Full path in local filesystem
                     path,  # Path on Rubrik for query
-                    obj['lastModified'],
-                    obj['size'],
+                    #obj['lastModified'],
+                    #obj['size'],
                     obj['fileMode'],
-                    obj['statusMessage'],
+                    #obj['statusMessage'],
                     int((datetime.strptime(obj['lastModified'], '%Y-%m-%dT%H:%M:%S+0000') - datetime(1970, 1, 1)).total_seconds()),
                     int((datetime.strptime(obj['lastModified'], '%Y-%m-%dT%H:%M:%S+0000') - datetime(1970, 1, 1)).total_seconds()),
                     st.st_gid,
