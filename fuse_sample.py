@@ -89,8 +89,8 @@ class RubrikDB:
                 fullpath = "{}{}{}".format(path, join, obj['filename'])
                 print("In join of {}".format(fullpath))
                 cur.execute("insert into filestore ("
-                            "filename, fullPath, path, lastModified, "
-                            "size, filemode, statusMessage, st_atime, st_ctime, st_gid, st_mode, st_mtime, st_nlink, st_size, st_uid"
+                            "filename, fullPath, path,"
+                            " filemode, st_atime, st_ctime, st_gid, st_mode, st_mtime, st_nlink, st_size, st_uid"
                             ") values ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');".format(
                     obj['filename'],  # File or directory name
                     fullpath,  # Full path in local filesystem
