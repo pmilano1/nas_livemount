@@ -61,14 +61,14 @@ class RubrikDB:
             print("Query : {}".format(q))
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
                 out.append(obj['filename'])
-                mypath = obj['path'].replace(obj['filename'], '')
+                mydir = path.replace(obj['filename'], '')
                 cur.execute("insert into filestore ("
-                            "filename, fullPath, path, lastModified, "
+                            "name, fullPath, path, lastModified, "
                             "size, filemode, statusMessage"
                             ") values ('{}','{}','{}','{}','{}','{}','{}');".format(
                     obj['filename'],
                     obj['path'],
-                    mypath,
+                    mydir,
                     obj['lastModified'],
                     obj['size'],
                     obj['fileMode'],
@@ -116,10 +116,15 @@ class RubrikFS(LoggingMixIn, Operations):
         return self.rubrikdb.db_getattr(path)
 
     def readdir(self, path, fh):
+
         # Modify path if its a windows volume
         if re.search(r'^/[A-Z]:', path):
             path = re.sub(r'^\/', "", path)
+
+        # Seed directory array for navigation
         objs = ['.', '..']
+
+        # Add actual directory content
         objs.extend(self.rubrikdb.db_readdir(path))
         return objs
 
