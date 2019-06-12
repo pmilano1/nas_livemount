@@ -56,10 +56,10 @@ class RubrikDB:
         out = []
         if re.search(r'^[A-Z]:', path):
             print("In first match")
-            join = "\\"
-        if re.search(r'^/', path):
-            print("In second match")
             join = "/"
+        if re.search(r'^/$', path):
+            print("In second match")
+            join = ""
         if cur.rowcount > 0:
             print("Found {} rows in readdir using {}".format(cur.rowcount, path))
             for r in cur.fetchall():
@@ -129,6 +129,7 @@ class RubrikFS(LoggingMixIn, Operations):
 
         # Modify path if its a windows volume
         if re.search(r'^/[A-Z]:', path):
+            path = re.sub(r'^\/', "", path)
             path = re.sub(r'/', r'\\', path)
 
         return self.rubrikdb.db_getattr(path)
