@@ -54,6 +54,10 @@ class RubrikDB:
         q = "select filename from filestore where fullPath='{}';".format(path)
         cur.execute(q)
         out = []
+        if re.search(r'^[A-Z]:', path):
+            join = "\\"
+        if re.search(r'^/', path):
+            join = "/"
         if cur.rowcount > 0:
             print("Found {} rows in readdir using {}".format(cur.rowcount, path))
             for r in cur.fetchall():
@@ -62,14 +66,16 @@ class RubrikDB:
             print("No rows found in readdir")
             print("Query : {}".format(q))
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
+                fullpath = None
                 out.append(obj['filename'])
-                mydir = path.replace(obj['filename'], '')
+                if join:
+                    fullpath = "{}{}{}".format(path,join,obj['filename'])
                 cur.execute("insert into filestore ("
                             "filename, fullPath, path, lastModified, "
                             "size, filemode, statusMessage"
                             ") values ('{}','{}','{}','{}','{}','{}','{}');".format(
                     obj['filename'],  # File or directory name
-                    mydir,  # Full path in local filesystem
+                    fullpath,  # Full path in local filesystem
                     path,  # Path on Rubrik for query
                     obj['lastModified'],
                     obj['size'],
