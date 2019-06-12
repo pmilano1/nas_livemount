@@ -55,7 +55,7 @@ class RubrikDB:
         cur.execute(q)
         out = []
         join = ""
-        if re.search(r'^[A-Z]:', path):
+        if re.search(r'^/[A-Z]:', path):
             print("In first match")
             join = "/"
         if cur.rowcount > 0:
