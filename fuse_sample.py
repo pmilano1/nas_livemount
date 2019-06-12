@@ -137,6 +137,8 @@ class RubrikDB:
                                                                    'st_gid', 'st_mode', 'st_mtime', 'st_nlink',
                                                                    'st_size',
                                                                    'st_uid'))
+                out['st_atime'] = int(out['st_atime'])
+                out['st_ctime'] = int(out['st_atime'])
                 out['st_size'] = obj['size']
                 out['st_mtime'] = (
                             datetime.strptime(obj['lastModified'],
