@@ -88,15 +88,22 @@ class RubrikDB:
 
     def db_getattr(self, path):
         cur = self.con.cursor()
+        # Modify path if its a windows volume
         q = "select * from filestore where fullPath='{}';".format(path)
         cur.execute(q)
+
+        # Set default stat values
         st = os.lstat('/tmp')
         out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
                                                        'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
                                                        'st_uid'))
         name = None
+
+        # Check DB for Cache Values
         if cur.rowcount > 0:
             print("Found {} rows in getattr using {}".format(cur.rowcount, path))
+
+        # Carry on with API hit
         else:
             print("No rows found in getattr")
             print("Query : {}".format(q))
@@ -129,17 +136,13 @@ class RubrikFS(LoggingMixIn, Operations):
 
         # Modify path if its a windows volume
         if re.search(r'^/[A-Z]:', path):
-            #path = re.sub(r'^\/', "", path)
+            path = re.sub(r'^\/', "", path)
             path = re.sub(r'/', r'\\', path)
 
         return self.rubrikdb.db_getattr(path)
 
     def readdir(self, path, fh):
 
-        # Modify path if its a windows volume
-        if re.search(r'^/[A-Z]:', path):
-            path = re.sub(r'^\/', "", path)
-            path = re.sub(r'\/', r'\\', path)
 
         # Seed directory array for navigation
         objs = ['.', '..']
