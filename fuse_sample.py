@@ -55,8 +55,10 @@ class RubrikDB:
         cur.execute(q)
         out = []
         if re.search(r'^[A-Z]:', path):
+            print("In first match")
             join = "\\"
         if re.search(r'^/', path):
+            print("In second match")
             join = "/"
         if cur.rowcount > 0:
             print("Found {} rows in readdir using {}".format(cur.rowcount, path))
@@ -66,7 +68,7 @@ class RubrikDB:
             print("No rows found in readdir")
             print("Query : {}".format(q))
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
-                fullpath = None
+                fullpath = path
                 out.append(obj['filename'])
                 if join:
                     fullpath = "{}{}{}".format(path,join,obj['filename'])
