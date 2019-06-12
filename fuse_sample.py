@@ -15,8 +15,9 @@ from stat import S_IFDIR, S_IFREG
 from time import time
 
 rubrikHost = "shrd1-rbk01.rubrikdemo.com"
-rubrikKey = str("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyOWNiNzFhMS0yZGIwLTRlZGQtYjA1Mi1kNmQ1NWRlMjBiOTRfMmY2MzFmYjItNzUyMi00ZTcwLWFjNzgtMzk1Y2EzNTIwMmRjIiwiaXNzIjoiMjljYjcxYTEtMmRiMC00ZWRkLWIwNTItZDZkNTVkZTIwYjk0IiwianRpIjoiYjNjYzUzYTUtNDIwMi00ZDc5LWE4ZDctMmFjNGI3ODk3YmU3In0.CyijHNB9H1-VTPD0MHcnvegHI0e0ZoA80y8n_W0yliI")
-#rubrikKey = str(
+rubrikKey = str(
+    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyOWNiNzFhMS0yZGIwLTRlZGQtYjA1Mi1kNmQ1NWRlMjBiOTRfMmY2MzFmYjItNzUyMi00ZTcwLWFjNzgtMzk1Y2EzNTIwMmRjIiwiaXNzIjoiMjljYjcxYTEtMmRiMC00ZWRkLWIwNTItZDZkNTVkZTIwYjk0IiwianRpIjoiYjNjYzUzYTUtNDIwMi00ZDc5LWE4ZDctMmFjNGI3ODk3YmU3In0.CyijHNB9H1-VTPD0MHcnvegHI0e0ZoA80y8n_W0yliI")
+# rubrikKey = str(
 #    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YTc1YWU5Yy0zMzdkLTQ3ZDMtYjUxNS01MmFmNzE5MTcxMmNfMmY2MzFmYjItNzUyMi00ZTcwLWFjNzgtMzk1Y2EzNTIwMmRjIiwiaXNzIjoiNWE3NWFlOWMtMzM3ZC00N2QzLWI1MTUtNTJhZjcxOTE3MTJjIiwianRpIjoiY2QwMzgyZTgtZTk1OC00MWUxLWJhNGUtYTc2YTY5N2NhZDM3In0.iGwpmJASop36bGCrMIZmRc8lRG34QLpCdYTBQ0K3Tvs")
 rubrikSnapshot = str("92281431-bfb6-4a76-aa75-e5c33a0d1958")
 rubrikOperatingSystemType = "Windows"
@@ -54,7 +55,7 @@ class RubrikDB:
         cur.execute(q)
         out = []
         if cur.rowcount > 0:
-            print("Found {} rows in readdir using {}".format(cur.rowcount,path))
+            print("Found {} rows in readdir using {}".format(cur.rowcount, path))
         else:
             print("No rows found in readdir")
             print("Query : {}".format(q))
@@ -62,17 +63,17 @@ class RubrikDB:
                 out.append(obj['filename'])
                 mypath = obj['path'].replace(obj['filename'], '')
                 cur.execute("insert into filestore ("
-                                 "filename, fullPath, path, lastModified, "
-                                 "size, filemode, statusMessage"
-                                 ") values ('{}','{}','{}','{}','{}','{}','{}');".format(
-                                                                                    obj['filename'],
-                                                                                    obj['path'],
-                                                                                    mypath,
-                                                                                    obj['lastModified'],
-                                                                                    obj['size'],
-                                                                                    obj['fileMode'],
-                                                                                    obj['statusMessage']
-                                                                                    ))
+                            "filename, fullPath, path, lastModified, "
+                            "size, filemode, statusMessage"
+                            ") values ('{}','{}','{}','{}','{}','{}','{}');".format(
+                    obj['filename'],
+                    obj['path'],
+                    mypath,
+                    obj['lastModified'],
+                    obj['size'],
+                    obj['fileMode'],
+                    obj['statusMessage']
+                ))
         return out
 
     def db_getattr(self, path):
@@ -83,17 +84,8 @@ class RubrikDB:
         out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
                                                        'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
                                                        'st_uid'))
-        if rubrikOperatingSystemType == "Windows":
-            name = None
-            path = re.sub(r'^\/(\S+.*)', '\\1', path)
-            if not path.startswith("/"):
-                path = path.replace('/', '\\')
-                if "\\" in path:
-                    [path, name] = path.rsplit('\\', 1)
-                if not name:
-                    name = path
         if cur.rowcount > 0:
-            print("Found {} rows in getattr using {}".format(cur.rowcount,path))
+            print("Found {} rows in getattr using {}".format(cur.rowcount, path))
         else:
             print("No rows found in getattr")
             print("Query : {}".format(q))
@@ -124,10 +116,9 @@ class RubrikFS(LoggingMixIn, Operations):
         return self.rubrikdb.db_getattr(path)
 
     def readdir(self, path, fh):
-        if rubrikOperatingSystemType == "Windows":
-            path = re.sub(r'^\/(\S+.*)', '\\1', path)
-            if not path.startswith("/"):
-                path = path.replace('/', '\\')
+        # Modify path if its a windows volume
+        if re.search(r'^/[A-Z]:', path):
+            path = re.sub(r'^\/', "", path)
         objs = ['.', '..']
         objs.extend(self.rubrikdb.db_readdir(path))
         return objs
