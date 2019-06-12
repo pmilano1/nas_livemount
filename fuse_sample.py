@@ -68,9 +68,9 @@ class RubrikDB:
                             "filename, fullPath, path, lastModified, "
                             "size, filemode, statusMessage"
                             ") values ('{}','{}','{}','{}','{}','{}','{}');".format(
-                    obj['filename'],
-                    mydir,
-                    obj['path'],
+                    obj['filename'],  # File or directory name
+                    mydir,  # Full path in local filesystem
+                    path,  # Path on Rubrik for query
                     obj['lastModified'],
                     obj['size'],
                     obj['fileMode'],
