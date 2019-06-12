@@ -49,14 +49,14 @@ class RubrikDB:
                     "size int, "
                     "fileMode string, "
                     "statusMessage string, "
-                    "st_atime string, "
-                    "st_ctime string, "
-                    "st_gid string, "
-                    "st_mode string, "
-                    "st_mtime string, "
-                    "st_nlink string, "
-                    "st_size string, "
-                    "st_uid string, "
+                    "st_atime numeric, "
+                    "st_ctime numeric , "
+                    "st_gid int, "
+                    "st_mode int, "
+                    "st_mtime numeric, "
+                    "st_nlink int, "
+                    "st_size numeric, "
+                    "st_uid int, "
                     "file_local bool DEFAULT false,"
                     "index path_idx (path)"
                     ");")
@@ -119,7 +119,6 @@ class RubrikDB:
         if cur.rowcount == 1:
             print("Found {} rows in getattr using {}".format(cur.rowcount, path))
             r = dict(zip([col.name for col in cur.description], cur.fetchone()))
-            # print("Array is : {} and atime is {}".format(r, r['st_atime']))
             out = dict((key, r[key]) for key in ('st_atime', 'st_ctime',
                                                           'st_gid', 'st_mode', 'st_mtime', 'st_nlink',
                                                           'st_size',
