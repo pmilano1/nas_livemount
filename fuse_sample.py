@@ -88,10 +88,6 @@ class RubrikDB:
 
     def db_getattr(self, path):
         cur = self.con.cursor()
-        # Modify path if its a windows volume
-        # if re.search(r'^/[A-Z]:', path):
-        #     path = re.sub(r'^\/', "", path)
-        #    path = re.sub(r'\/', r'\\', path)
         q = "select * from filestore where fullPath='{}';".format(path)
         cur.execute(q)
 
@@ -173,6 +169,10 @@ class Rubrik:
         requests.packages.urllib3.disable_warnings()
 
     def browse_path(self, snap="", path=""):
+        # Modify path if its a windows volume
+        if re.search(r'^/[A-Z]:', path):
+            path = re.sub(r'^\/', "", path)
+            path = re.sub(r'\/', r'\\', path)
         return self.apicall(self.callFilesetBrowse.format(snap, ul.quote_plus(path)))
 
     def apicall(self, call, method="get", data="", internal=False):
