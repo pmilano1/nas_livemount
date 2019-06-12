@@ -113,6 +113,7 @@ class RubrikDB:
         cur = self.con.cursor()
         q = "select * from filestore where fullPath='{}';".format(path)
         cur.execute(q)
+        name = None
 
         # Check DB for Cache Values
         if cur.rowcount == 1:
