@@ -102,9 +102,10 @@ class RubrikDB:
                     int(st.st_ctime),
                     st.st_gid,
                     st.st_mode,
-                    int(st.st_mtime),
+                    int((datetime.strptime(obj['lastModified'], '%Y-%m-%dT%H:%M:%S+0000')
+                         - datetime(1970, 1, 1)).total_seconds() | st.st_mtime),
                     st.st_nlink,
-                    st.st_size,
+                    obj['size'] | st.st_size,
                     st.st_uid
                 ))
         return out
