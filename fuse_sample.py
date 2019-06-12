@@ -58,7 +58,8 @@ class RubrikDB:
                     "st_size bigint, "
                     "st_uid int, "
                     "file_local bool DEFAULT false,"
-                    "index path_idx (path)"
+                    "index path_idx (path),"
+                    "index fullpath_idx (fullpath)"
                     ");")
 
     def db_readdir(self, path):
@@ -68,16 +69,16 @@ class RubrikDB:
         out = []
         join = ""
         if re.search(r'^/[A-Z]:', path):
-            print("In first match")
+            # print("In first match")
             join = "/"
         if cur.rowcount > 0:
-            print("Found {} rows in readdir using {}".format(cur.rowcount, path))
-            print("Query : {}".format(q))
+            # print("Found {} rows in readdir using {}".format(cur.rowcount, path))
+            # print("Query : {}".format(q))
             for r in cur.fetchall():
                 out.append(r[0])
         else:
-            print("No rows found in readdir")
-            print("Query : {}".format(q))
+            # print("No rows found in readdir")
+            # print("Query : {}".format(q))
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
                 if obj['fileMode'] == 'drive' or obj['fileMode'] == 'directory':
                     st = self.dstat
@@ -98,8 +99,8 @@ class RubrikDB:
                     obj['size'],
                     obj['fileMode'],
                     obj['statusMessage'],
-                    int(st.st_atime),
-                    int(st.st_ctime),
+                    int((datetime.strptime(obj['lastModified'], '%Y-%m-%dT%H:%M:%S+0000') - datetime(1970, 1, 1)).total_seconds()),
+                    int((datetime.strptime(obj['lastModified'], '%Y-%m-%dT%H:%M:%S+0000') - datetime(1970, 1, 1)).total_seconds()),
                     st.st_gid,
                     st.st_mode,
                     int((datetime.strptime(obj['lastModified'], '%Y-%m-%dT%H:%M:%S+0000') - datetime(1970, 1, 1)).total_seconds()),
@@ -117,7 +118,7 @@ class RubrikDB:
 
         # Check DB for Cache Values
         if cur.rowcount == 1:
-            print("Found {} rows in getattr using {}".format(cur.rowcount, path))
+            # print("Found {} rows in getattr using {}".format(cur.rowcount, path))
             r = dict(zip([col.name for col in cur.description], cur.fetchone()))
             out = dict((key, r[key]) for key in ('st_atime', 'st_ctime',
                                                           'st_gid', 'st_mode', 'st_mtime', 'st_nlink',
@@ -125,10 +126,10 @@ class RubrikDB:
                                                           'st_uid'))
         # Carry on with API hit
         else:
-            print("No rows found in getattr")
-            print("Query : {}".format(q))
+            # print("No rows found in getattr")
+            # print("Query : {}".format(q))
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
-                print("found {} and {}".format(obj['filename'], name))
+                # print("found {} and {}".format(obj['filename'], name))
                 if obj['fileMode'] == "directory" or obj['fileMode'] == "drive":
                     st = os.lstat('test_dir')
                 else:
@@ -156,11 +157,8 @@ class RubrikFS(LoggingMixIn, Operations):
         return self.rubrikdb.db_getattr(path)
 
     def readdir(self, path, fh):
-
-
         # Seed directory array for navigation
         objs = ['.', '..']
-
         # Add actual directory content
         objs.extend(self.rubrikdb.db_readdir(path))
         return objs
