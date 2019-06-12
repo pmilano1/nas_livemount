@@ -125,20 +125,18 @@ class RubrikDB:
             print("No rows found in getattr")
             print("Query : {}".format(q))
             if not name:
-                name = path
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
                 print("found {} and {}".format(obj['filename'],name))
-                if obj['filename'] == name:
-                    if obj['fileMode'] == "directory" or obj['filemode'] == "drive":
-                        st = os.lstat('test_dir')
-                    else:
-                        st = os.lstat('test_dir/test_file')
-                    out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
+                if obj['fileMode'] == "directory" or obj['filemode'] == "drive":
+                    st = os.lstat('test_dir')
+                else:
+                    st = os.lstat('test_dir/test_file')
+                out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
                                                                    'st_gid', 'st_mode', 'st_mtime', 'st_nlink',
                                                                    'st_size',
                                                                    'st_uid'))
-                    out['st_size'] = obj['size']
-                    out['st_mtime'] = (
+                out['st_size'] = obj['size']
+                out['st_mtime'] = (
                             datetime.strptime(obj['lastModified'],
                                               '%Y-%m-%dT%H:%M:%S+0000')
                             - datetime(1970, 1, 1)).total_seconds()
