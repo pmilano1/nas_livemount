@@ -34,6 +34,8 @@ class RubrikDB:
         self.dbname = "_{}".format(rubrikSnapshot.replace('-', '_'))
         self.con = psycopg2.connect(host='localhost', sslmode='disable', port=26257, user='root')
         self.con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+        self.fstat = os.lstat('test_dir/test_file')
+        self.dstat = os.lstat('test_dir')
         cur = self.con.cursor()
         cur.execute("CREATE DATABASE IF NOT EXISTS {};".format(self.dbname))
         cur.execute("use {};".format(self.dbname))
@@ -46,6 +48,15 @@ class RubrikDB:
                     "size int, "
                     "fileMode string, "
                     "statusMessage string, "
+                    "st_atime string, "
+                    "st_ctime string, "
+                    "st_gid string, "
+                    "st_mode string, "
+                    "st_mtime string, "
+                    "st_nlink string, "
+                    "st_size string, "
+                    "st_uid string, "
+                    "file_local bool DEFAULT 0,"
                     "index path_idx (path)"
                     ");")
 
@@ -67,13 +78,17 @@ class RubrikDB:
             print("No rows found in readdir")
             print("Query : {}".format(q))
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
+                if obj['fileMode'] == 'drive' or obj['fileMode'] == 'directory':
+                    st = self.dstat
+                else:
+                    st = self.fstat
                 fullpath = path
                 out.append(obj['filename'])
                 fullpath = "{}{}{}".format(path, join, obj['filename'])
                 print("In join of {}".format(fullpath))
                 cur.execute("insert into filestore ("
                             "filename, fullPath, path, lastModified, "
-                            "size, filemode, statusMessage"
+                            "size, filemode, statusMessage, st_atime, st_ctime, st_gid, st_mode, st_mtime, st_nlink, st_size, st_uuid"
                             ") values ('{}','{}','{}','{}','{}','{}','{}');".format(
                     obj['filename'],  # File or directory name
                     fullpath,  # Full path in local filesystem
@@ -81,7 +96,15 @@ class RubrikDB:
                     obj['lastModified'],
                     obj['size'],
                     obj['fileMode'],
-                    obj['statusMessage']
+                    obj['statusMessage'],
+                    st.st_atime,
+                    st.st_ctime,
+                    st.st_gid,
+                    st.st_mode,
+                    st.st_mtime,
+                    st.st_nlink,
+                    st.st_size,
+                    st.st_uid
                 ))
         return out
 
@@ -90,11 +113,6 @@ class RubrikDB:
         q = "select * from filestore where fullPath='{}';".format(path)
         cur.execute(q)
 
-        # Set default stat values
-        st = os.lstat('/tmp')
-        out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
-                                                       'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
-                                                       'st_uid'))
         name = None
 
         # Check DB for Cache Values
