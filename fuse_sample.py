@@ -118,10 +118,11 @@ class RubrikDB:
         # Check DB for Cache Values
         if cur.rowcount == 1:
             print("Found {} rows in getattr using {}".format(cur.rowcount, path))
-            out = dict((key, getattr(type(cur.fetchone()), key)) for key in ('st_atime', 'st_ctime',
-                                                           'st_gid', 'st_mode', 'st_mtime', 'st_nlink',
-                                                           'st_size',
-                                                           'st_uid'))
+            r = dict(zip([col.name for col in cur.description], cur.fetchone()))
+            out = dict((key, getattr(r, key)) for key in ('st_atime', 'st_ctime',
+                                                          'st_gid', 'st_mode', 'st_mtime', 'st_nlink',
+                                                          'st_size',
+                                                          'st_uid'))
             print("Got out of : {}".format(out))
 
         # Carry on with API hit
