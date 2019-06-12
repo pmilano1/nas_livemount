@@ -117,15 +117,22 @@ class RubrikDB:
         name = None
 
         # Check DB for Cache Values
-        if cur.rowcount > 0:
+        if cur.rowcount == 1:
             print("Found {} rows in getattr using {}".format(cur.rowcount, path))
+            st = zip([desc[0] for desc in cur.description], cur.fetchone())
+            out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
+                                                           'st_gid', 'st_mode', 'st_mtime', 'st_nlink',
+                                                           'st_size',
+                                                           'st_uid'))
+            print("Got out of : {}".format(out))
+
 
         # Carry on with API hit
         else:
             print("No rows found in getattr")
             print("Query : {}".format(q))
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
-                print("found {} and {}".format(obj['filename'],name))
+                print("found {} and {}".format(obj['filename'], name))
                 if obj['fileMode'] == "directory" or obj['fileMode'] == "drive":
                     st = os.lstat('test_dir')
                 else:
