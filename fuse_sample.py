@@ -89,6 +89,9 @@ class RubrikDB:
     def db_getattr(self, path):
         cur = self.con.cursor()
         # Modify path if its a windows volume
+        # if re.search(r'^/[A-Z]:', path):
+        #     path = re.sub(r'^\/', "", path)
+        #    path = re.sub(r'\/', r'\\', path)
         q = "select * from filestore where fullPath='{}';".format(path)
         cur.execute(q)
 
@@ -133,12 +136,6 @@ class RubrikFS(LoggingMixIn, Operations):
         self.rubrikdb = RubrikDB()
 
     def getattr(self, path, fh=None):
-
-        # Modify path if its a windows volume
-        if re.search(r'^/[A-Z]:', path):
-            path = re.sub(r'^\/', "", path)
-            path = re.sub(r'/', r'\\', path)
-
         return self.rubrikdb.db_getattr(path)
 
     def readdir(self, path, fh):
