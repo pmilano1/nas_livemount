@@ -69,7 +69,6 @@ class RubrikDB:
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
                 fullpath = path
                 out.append(obj['filename'])
-                #if join:
                 fullpath = "{}{}{}".format(path, join, obj['filename'])
                 print("In join of {}".format(fullpath))
                 cur.execute("insert into filestore ("
@@ -110,7 +109,7 @@ class RubrikDB:
                 name = path
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
                 if obj['filename'] == name:
-                    if obj['fileMode'] == "directory":
+                    if obj['fileMode'] == "directory" or obj['filemode'] == "drive":
                         st = os.lstat('test_dir')
                     else:
                         st = os.lstat('test_dir/test_file')
