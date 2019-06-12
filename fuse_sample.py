@@ -51,11 +51,13 @@ class RubrikDB:
 
     def db_readdir(self, path):
         cur = self.con.cursor()
-        q = "select * from filestore where fullPath='{}';".format(path)
+        q = "select filename from filestore where fullPath='{}';".format(path)
         cur.execute(q)
         out = []
         if cur.rowcount > 0:
             print("Found {} rows in readdir using {}".format(cur.rowcount, path))
+            for r in cur.fetchall():
+                out.append(r[0])
         else:
             print("No rows found in readdir")
             print("Query : {}".format(q))
