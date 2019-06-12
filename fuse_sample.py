@@ -129,7 +129,6 @@ class RubrikFS(LoggingMixIn, Operations):
 
         # Modify path if its a windows volume
         if re.search(r'^/[A-Z]:', path):
-            path = re.sub(r'^\/', "", path)
             path = re.sub(r'/', r'\\', path)
 
         return self.rubrikdb.db_getattr(path)
