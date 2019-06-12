@@ -62,6 +62,7 @@ class RubrikDB:
             join = ""
         if cur.rowcount > 0:
             print("Found {} rows in readdir using {}".format(cur.rowcount, path))
+            print("Query : {}".format(q))
             for r in cur.fetchall():
                 out.append(r[0])
         else:
@@ -70,7 +71,7 @@ class RubrikDB:
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
                 fullpath = path
                 out.append(obj['filename'])
-                if join and not obj['fileMode'] == 'drive':
+                if join:
                     fullpath = "{}{}{}".format(path, join, obj['filename'])
                 cur.execute("insert into filestore ("
                             "filename, fullPath, path, lastModified, "
