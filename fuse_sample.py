@@ -6,27 +6,18 @@ import re
 import requests
 import psycopg2
 import urllib.parse as ul
-import uuid
 from fuse import FUSE, FuseOSError, Operations, LoggingMixIn, fuse_get_context
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from datetime import datetime
-from errno import ENOENT
-from stat import S_IFDIR, S_IFREG
-from time import time
+#from errno import ENOENT
+#from stat import S_IFDIR, S_IFREG
+#from time import time
 
 
 rubrikHost = "amer1-rbk01.rubrikdemo.com"
 rubrikKey = str("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YTc1YWU5Yy0zMzdkLTQ3ZDMtYjUxNS01MmFmNzE5MTcxMmNfMmY2MzFmYjItNzUyMi00ZTcwLWFjNzgtMzk1Y2EzNTIwMmRjIiwiaXNzIjoiNWE3NWFlOWMtMzM3ZC00N2QzLWI1MTUtNTJhZjcxOTE3MTJjIiwianRpIjoiY2QwMzgyZTgtZTk1OC00MWUxLWJhNGUtYTc2YTY5N2NhZDM3In0.iGwpmJASop36bGCrMIZmRc8lRG34QLpCdYTBQ0K3Tvs")
-rubrikSnapshot = str("3fa0f5b3-2a63-4361-b999-decb8794faad")
+rubrikSnapshot = str("0baecdc1-b632-4e5b-9d20-693f0a8e0cf7")
 rubrikOperatingSystemType = "Windows"
-
-#rubrikHost = "shrd1-rbk01.rubrikdemo.com"
-#rubrikKey = str(
- #   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyOWNiNzFhMS0yZGIwLTRlZGQtYjA1Mi1kNmQ1NWRlMjBiOTRfMmY2MzFmYjItNzUyMi00ZTcwLWFjNzgtMzk1Y2EzNTIwMmRjIiwiaXNzIjoiMjljYjcxYTEtMmRiMC00ZWRkLWIwNTItZDZkNTVkZTIwYjk0IiwianRpIjoiYjNjYzUzYTUtNDIwMi00ZDc5LWE4ZDctMmFjNGI3ODk3YmU3In0.CyijHNB9H1-VTPD0MHcnvegHI0e0ZoA80y8n_W0yliI")
-#rubrikSnapshot = str("92281431-bfb6-4a76-aa75-e5c33a0d1958")
-#rubrikOperatingSystemType = "Windows"
-
-
 
 
 class RubrikDB:
@@ -45,10 +36,7 @@ class RubrikDB:
                     "filename string, "
                     "fullPath string, "
                     "path string, "
-                    #"lastModified string, "
-                    #"size bigint, "
                     "fileMode string, "
-                    #"statusMessage string, "
                     "st_atime bigint, "
                     "st_ctime bigint , "
                     "st_gid int, "
@@ -69,22 +57,16 @@ class RubrikDB:
         out = []
         join = ""
         if re.search(r'^/[A-Z]:', path):
-            # print("In first match")
             join = "/"
         if cur.rowcount > 0:
-            # print("Found {} rows in readdir using {}".format(cur.rowcount, path))
-            # print("Query : {}".format(q))
             for r in cur.fetchall():
                 out.append(r[0])
         else:
-            # print("No rows found in readdir")
-            # print("Query : {}".format(q))
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
                 if obj['fileMode'] == 'drive' or obj['fileMode'] == 'directory':
                     st = self.dstat
                 else:
                     st = self.fstat
-                fullpath = path
                 out.append(obj['filename'])
                 fullpath = "{}{}{}".format(path, join, obj['filename'])
                 print("In join of {}".format(fullpath))
@@ -95,10 +77,7 @@ class RubrikDB:
                     obj['filename'],  # File or directory name
                     fullpath,  # Full path in local filesystem
                     path,  # Path on Rubrik for query
-                    #obj['lastModified'],
-                    #obj['size'],
                     obj['fileMode'],
-                    #obj['statusMessage'],
                     int((datetime.strptime(obj['lastModified'], '%Y-%m-%dT%H:%M:%S+0000') - datetime(1970, 1, 1)).total_seconds()),
                     int((datetime.strptime(obj['lastModified'], '%Y-%m-%dT%H:%M:%S+0000') - datetime(1970, 1, 1)).total_seconds()),
                     st.st_gid,
@@ -114,11 +93,8 @@ class RubrikDB:
         cur = self.con.cursor()
         q = "select * from filestore where fullPath='{}';".format(path)
         cur.execute(q)
-        name = None
-
         # Check DB for Cache Values
         if cur.rowcount == 1:
-            # print("Found {} rows in getattr using {}".format(cur.rowcount, path))
             r = dict(zip([col.name for col in cur.description], cur.fetchone()))
             out = dict((key, r[key]) for key in ('st_atime', 'st_ctime',
                                                           'st_gid', 'st_mode', 'st_mtime', 'st_nlink',
@@ -126,10 +102,7 @@ class RubrikDB:
                                                           'st_uid'))
         # Carry on with API hit
         else:
-            # print("No rows found in getattr")
-            # print("Query : {}".format(q))
             for obj in self.rubrik.browse_path(rubrikSnapshot, path)['data']:
-                # print("found {} and {}".format(obj['filename'], name))
                 if obj['fileMode'] == "directory" or obj['fileMode'] == "drive":
                     st = os.lstat('test_dir')
                 else:
@@ -145,7 +118,6 @@ class RubrikDB:
                             datetime.strptime(obj['lastModified'],
                                               '%Y-%m-%dT%H:%M:%S+0000')
                             - datetime(1970, 1, 1)).total_seconds()
-
         return out
 
 
@@ -173,7 +145,6 @@ class Rubrik:
             return self.msg
 
     def __init__(self, rubrik_addr, rubrik_api_key):
-        # Prompt for configuration info
         self.rubrik_addr = rubrik_addr
         self.baseurl = "https://" + self.rubrik_addr + "/api/v1/"
         self.internal_baseurl = "https://" + self.rubrik_addr + "/api/internal/"
@@ -195,7 +166,6 @@ class Rubrik:
         return self.apicall(self.callFilesetBrowse.format(snap, ul.quote_plus(path)))
 
     def apicall(self, call, method="get", data="", internal=False):
-        uri = self.baseurl + call
         if internal:
             uri = self.internal_baseurl + call
         else:
@@ -221,11 +191,9 @@ class Rubrik:
 
 if __name__ == '__main__':
     import argparse
-
     parser = argparse.ArgumentParser()
     parser.add_argument('mount')
     args = parser.parse_args()
-
     logging.basicConfig(level=logging.DEBUG)
     fuse = FUSE(
         RubrikFS(), args.mount, foreground=True, ro=True, allow_other=True)
