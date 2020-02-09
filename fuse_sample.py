@@ -14,7 +14,7 @@ import requests
 
 rubrikHost = "amer1-rbk01.rubrikdemo.com"
 rubrikKey = str("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YTc1YWU5Yy0zMzdkLTQ3ZDMtYjUxNS01MmFmNzE5MTcxMmNfMmY2MzFmYjItNzUyMi00ZTcwLWFjNzgtMzk1Y2EzNTIwMmRjIiwiaXNzIjoiNWE3NWFlOWMtMzM3ZC00N2QzLWI1MTUtNTJhZjcxOTE3MTJjIiwianRpIjoiY2QwMzgyZTgtZTk1OC00MWUxLWJhNGUtYTc2YTY5N2NhZDM3In0.iGwpmJASop36bGCrMIZmRc8lRG34QLpCdYTBQ0K3Tvs")
-rubrikSnapshot = str("3fa0f5b3-2a63-4361-b999-decb8794faad")
+rubrikSnapshot = str("9be2a9e7-63a1-4161-bd4c-208d866678ec")
 rubrikOperatingSystemType = "Windows"
 
 #rubrikHost = "amer1-rbk01.rubrikdemo.com"
@@ -25,6 +25,7 @@ rubrikOperatingSystemType = "Windows"
 class RubrikFS(LoggingMixIn, Operations):
     def __init__(self):
         self.rubrik = Rubrik(rubrikHost, rubrikKey)
+
     def getattr(self, path, fh=None):
         st = os.lstat('/tmp')
         out = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',

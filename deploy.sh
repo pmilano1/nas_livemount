@@ -1,6 +1,6 @@
 #!/bin/bash
-#echo "Updating Packages"
-#sudo apt update -y
+echo "Updating Packages"
+sudo apt update -y
 echo "Install pip3"
 sudo apt install -y python3-pip
 echo "Install fuse"
